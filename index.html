@@ -1,0 +1,60 @@
+<html>
+<head>
+<link href="style.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+<div id="container">
+
+	<div id="header">
+		<p>Connect 4</p>
+	</div>
+
+	<div id="leftnav">
+		<button id="startgame">Start game</button>
+
+		<form action="">
+			<p>Player 1</p>
+			<!--o stands for "ordinateur"-->
+			<input type="radio" name="usertypep1" value="o" id="p1computerbox"> Computer </input><br> 
+			<!--h stands for "human"-->
+			<input type="radio" name="usertypep1" value="h" id="p1playerbox" checked> Player</input> 
+		</form>
+		<form action="">
+			<p>Player 2</p>
+			<input type="radio" name="usertypep2" value="o" id="p2computerbox" checked> Computer </input><br>
+			<input type="radio" name="usertypep2" value="h" id="p2playerbox"> Player</input>
+		</form>
+	</div>
+
+	<div id="rightnav">
+		<p >Games played: </p>
+		<div id="gamesplayed" class="bold textcenter">0</div>
+		
+		<p >Games won: </p>
+		<div class="textcenter" >Player 1</div>
+		<div class="bold textcenter" id="player1wins">0</div><br>
+		
+		<div class="textcenter">Player 2: </div>
+		<div class="bold textcenter" id="player2wins">0</div><br>
+		
+		<div class="textcenter">Ties: </div>
+		<div class="bold textcenter" id="tie">0</div>
+	</div> 
+
+	<div class="playboard" id="body"> 
+	</div>
+
+	<div id="footer">
+		<div><input type="range" id="rownumberslider" min="4" max="10" value="6" >Number of rows: <b id="rownumbercounter">6</b></div>
+		<input type="range" id="columnnumberslider" min="4" max="10" value="7" >Number of columns: <b id="columnnumbercounter">7</b>
+	</div>
+	
+<script type="text/javascript" src="jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="connect4code.js"></script>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<head>
+<link href="style.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+<div id="container">
+
+	<div id="header">
+		<p>Connect 4</p>
+	</div>
+
+	<div id="leftnav">
+		<button id="startgame">Start game</button>
+
+		<form action="">
+			<p>Player 1</p>
+			<!--o stands for "ordinateur"-->
+			<input type="radio" name="usertypep1" value="o" id="p1computerbox"> Computer </input><br> 
+			<!--h stands for "human"-->
+			<input type="radio" name="usertypep1" value="h" id="p1playerbox" checked> Player</input> 
+		</form>
+		<form action="">
+			<p>Player 2</p>
+			<input type="radio" name="usertypep2" value="o" id="p2computerbox" checked> Computer </input><br>
+			<input type="radio" name="usertypep2" value="h" id="p2playerbox"> Player</input>
+		</form>
+	</div>
+
+	<div id="rightnav"></div> 
+
+	<div class="playboard" id="body"> 
+		<!--ul represents rows"-->
+		<ul>
+		<!-- each li is a playable square-->
+			<li class="playbox" id="50"></li>
+			<li class="playbox" id="51"></li>
+			<li class="playbox" id="52"></li>
+			<li class="playbox" id="53"></li>
+			<li class="playbox" id="54"></li>
+			<li class="playbox" id="55"></li>
+			<li class="playbox" id="56"></li>		
+		</ul>
+		<ul>
+			<li class="playbox" id="40"></li>
+			<li class="playbox" id="41"></li>
+			<li class="playbox" id="42"></li>
+			<li class="playbox" id="43"></li>
+			<li class="playbox" id="44"></li>
+			<li class="playbox" id="45"></li>
+			<li class="playbox" id="46"></li>		
+		</ul>
+		<ul>
+			<li class="playbox" id="30"></li>
+			<li class="playbox" id="31"></li>
+			<li class="playbox" id="32"></li>
+			<li class="playbox" id="33"></li>
+			<li class="playbox" id="34"></li>
+			<li class="playbox" id="35"></li>
+			<li class="playbox" id="36"></li>		
+		</ul>
+		<ul>
+			<li class="playbox" id="20"></li>
+			<li class="playbox" id="21"></li>
+			<li class="playbox" id="22"></li>
+			<li class="playbox" id="23"></li>
+			<li class="playbox" id="24"></li>
+			<li class="playbox" id="25"></li>
+			<li class="playbox" id="26"></li>
+		</ul>
+		<ul>
+			<li class="playbox" id="10"></li>
+			<li class="playbox" id="11"></li>
+			<li class="playbox" id="12"></li>
+			<li class="playbox" id="13"></li>
+			<li class="playbox" id="14"></li>
+			<li class="playbox" id="15"></li>
+			<li class="playbox" id="16"></li>		
+		</ul>
+		<ul>
+			<li class="playbox" id="00"></li>
+			<li class="playbox" id="01"></li>
+			<li class="playbox" id="02"></li>
+			<li class="playbox" id="03"></li>
+			<li class="playbox" id="04"></li>
+			<li class="playbox" id="05"></li>
+			<li class="playbox" id="06"></li>		
+		</ul>
+	</div>
+
+	<div id="footer"></div>
+	
+<script type="text/javascript" src="jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="connect4code.js"></script>
+</div>
+
+</body>
+
+</html>
