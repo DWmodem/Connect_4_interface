@@ -2,33 +2,91 @@
 //Humain et ordi
 $(document).ready(function(){
 
+//Tracking data.
 var COLONNES = 7;
 var LIGNES = 6;
 var gamesPlayed = 0;
 var p1Wins = 0;
 var p2Wins = 0;
 var tie = 0;
-
+var inGame = false;
+//End Tracking data
+//Generate a board for Aesthetics' sake
 generateHTMLBoard(LIGNES, COLONNES);
+/*
+/*------------------------Actual game----------------------------*/
+//Game variables
+/*
+var NBCOLONNES = COLONNES;
+var NBRANGEES = LIGNES;
+var gameboard = (creeTableauVide(NBCOLONNES,NBRANGEES," "));
+var joueur1 = player1Radio();
+var joueur2 = player2Radio();
+var playermove = "0";
+var playerturn = 0;                                 // playerturn: Variable associée pour déterminer à qui le tour avec (k % 2)
+var k = 0;                                          // k: Compteur de tours. k++ a chaque fois que quelqu'un joue.
+var vainqueur = 0;                                  // vainqueur: lorsque vainqueur vaut 1, on declare le joueur present gagnant
+var coords = [0, 0];                                // coords: sert a savoir les coordonnées de l'endroit ou le joueur joue
 
-//Run game when user clicks start game
+*/
 
+//Troubleshooting function for when shit gets tough
+$("*").click(function(){
+console.log($(this).attr("id"));
+console.log($(this).attr("class"));
+});
+
+$(".playbox").click(function(){
+
+var currentRow = ($(this).attr('id').charAt(0));
+var currentColumn = ($(this).attr('id')).charAt(1);
+console.log("playbox "+currentRow+currentColumn+" has been clicked");
+
+if(inGame && (colonneAcoord(gameboard, currentColumn) != 0)){
+console.log("This is a valid play");
+}
+})//End click empty square event
+
+/*------------------------End actual game-------------------------*/
+
+//Run game, clear all variables when user clicks start game
 $("#startgame").click(function(){
+	inGame = true;
 	generateHTMLBoard(LIGNES, COLONNES);
+	//resetGameVariables();
 	connect4(LIGNES, COLONNES);			
 })
+
 //Function that updates the row number counter to the value of the slider, and the number of lines wanted
 $("#rownumberslider").change(function(){
 	$("#rownumbercounter").text($("#rownumberslider").val());
 	LIGNES= $("#rownumberslider").val();
-	generateHTMLBoard(LIGNES, COLONNES);
+	if(!inGame){
+		generateHTMLBoard(LIGNES, COLONNES);
+	}
 })
+
 //Function that updates the column number counter to the value of the slider, the number of columns wanted
 $("#columnnumberslider").change(function(){
 	$("#columnnumbercounter").text($("#columnnumberslider").val());
 	COLONNES = $("#columnnumberslider").val();
-	generateHTMLBoard(LIGNES, COLONNES);
+	if(!inGame){
+		generateHTMLBoard(LIGNES, COLONNES);
+	}
 })
+//Clear all game variables
+function resetGameVariables(){
+	 NBCOLONNES = COLUMNS;
+	 NBRANGEES = LINES;
+	 gameboard = (creeTableauVide(NBCOLONNES,NBRANGEES," "));
+	 joueur1 = player1Radio();
+	 joueur2 = player2Radio();
+	 playermove = "0";
+	 playerturn = 0;                                 
+	 k = 0;                                          
+	 vainqueur = 0;                                  
+	 coords = [0, 0];                                
+}
 
 function generateHTMLBoard(NBRANGEES, NBCOLONNES){
 //Start off by resetting the width and height of leftnav, rightnav and container
@@ -171,7 +229,7 @@ function repeter(input,x){      	// Prend une valeur qui est ensuite convertie e
     return(output);
 };
 
-function colonneAcoord(board, play){          	
+function colonneAcoord(board, play){          	// play = la colonne jouée
 												// Retourne les coordonnées du jeu valide dans la colonne spécifiée [x, y]
 var opcoords = [0, 0];                         	// Si la colonne n'est pas valide, retourne 0
 
@@ -416,11 +474,10 @@ function alertPlacement(k, coords){     // Procedure qui alert le jeton du joueu
     }
 }
 
-function connect4 (LINES, COLUMNS){ 
+function connect4 (LINES, COLUMNS){
 var NBCOLONNES = COLUMNS;
 var NBRANGEES = LINES;
 var gameboard = (creeTableauVide(NBCOLONNES,NBRANGEES," "));
-//generateHTMLBoard(NBCOLONNES, NBRANGEES);
 var joueur1 = player1Radio();
 var joueur2 = player2Radio();
 var playermove = "0";
@@ -479,10 +536,11 @@ while (vainqueur < 1){                              // Boucle jusqu'a ce qu'un j
 										// Retourne 1 si vainqueur.
 	if (vainqueur == -1){                           
         alert("Partie nulle!");
-	gamesPlayed++;
-	updateGamesPlayedCounter(gamesPlayed);
-	tie++;
-	updateTieCounter(tie);
+		gamesPlayed++;
+		updateGamesPlayedCounter(gamesPlayed);
+		tie++;
+		updateTieCounter(tie);
+		inGame = false;
         return 0;
     }
 	if(vainqueur == 1){
@@ -492,6 +550,7 @@ while (vainqueur < 1){                              // Boucle jusqu'a ce qu'un j
 			updateGamesPlayedCounter(gamesPlayed);
 			p1Wins++;
 			updatePlayer1WinsCounter(p1Wins);
+			inGame = false;
 			return 0;
 		}
 		else{
@@ -500,6 +559,7 @@ while (vainqueur < 1){                              // Boucle jusqu'a ce qu'un j
 			updateGamesPlayedCounter(gamesPlayed);
 			p2Wins++
 			updatePlayer2WinsCounter(p2Wins);
+			inGame = false;
 			return 0;
         }
 	}
