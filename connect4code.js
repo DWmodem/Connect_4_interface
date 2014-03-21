@@ -99,7 +99,20 @@ $("#startgame").click(function(){
 	removeHighlights();
 	
 })
+$(".playbox").mouseenter(function(){
 
+	var currentColumn = ($(this).attr('id')).charAt(1);
+	var futurePlacementCoords = [0,0]
+	if(inGame && (colonneAcoord(gameboard, parseInt(currentColumn) + 1) != 0)){
+		
+		colonneAcoord(gameboard, parseInt(currentColumn) + 1);
+		if((k%2) == 0){
+			$("#"+futurePlacementCoords[0]+futurePlacementCoords[1]).css("background-image","images/blacksquare.png")
+		}
+		
+	}
+
+});
 //Function that updates the row number counter to the value of the slider, and the number of lines wanted
 $("#rownumberslider").change(function(){
 	$("#rownumbercounter").text($("#rownumberslider").val());
