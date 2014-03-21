@@ -12,11 +12,12 @@ var tie = 0;
 var inGame = false;
 //End Tracking data
 //Generate a board for Aesthetics' sake
+
 generateHTMLBoard(LIGNES, COLONNES);
-/*
+
 /*------------------------Actual game----------------------------*/
 //Game variables
-/*
+
 var NBCOLONNES = COLONNES;
 var NBRANGEES = LIGNES;
 var gameboard = (creeTableauVide(NBCOLONNES,NBRANGEES," "));
@@ -28,13 +29,6 @@ var k = 0;                                          // k: Compteur de tours. k++
 var vainqueur = 0;                                  // vainqueur: lorsque vainqueur vaut 1, on declare le joueur present gagnant
 var coords = [0, 0];                                // coords: sert a savoir les coordonnées de l'endroit ou le joueur joue
 
-*/
-
-//Troubleshooting function for when shit gets tough
-$("*").click(function(){
-console.log($(this).attr("id"));
-console.log($(this).attr("class"));
-});
 
 $(".playbox").click(function(){
 
@@ -42,19 +36,68 @@ var currentRow = ($(this).attr('id').charAt(0));
 var currentColumn = ($(this).attr('id')).charAt(1);
 console.log("playbox "+currentRow+currentColumn+" has been clicked");
 
-if(inGame && (colonneAcoord(gameboard, currentColumn) != 0)){
+if(inGame && (colonneAcoord(gameboard, parseInt(currentColumn) + 1) != 0)){ // The +1 to currentColumn is to return to the base of human intuition.
+
 console.log("This is a valid play");
-}
+	playermove = parseInt(currentColumn) + 1;
+	coords = colonneAcoord(gameboard, playermove); 	// la valeur de coords sera forcement valide
+	playerturn = (k % 2);
+	modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
+	refreshPlateauDeJeu(gameboard);						// Refresh the html board
+	vainqueur = verifieVainqueur(gameboard, 0); 
+	
+	if (vainqueur == -1){                          
+        alert("Partie nulle!");
+		gamesPlayed++;
+		updateGamesPlayedCounter(gamesPlayed);
+		tie++;
+		updateTieCounter(tie);
+		inGame = false;
+		$(".playbox").css("opacity","0.6");
+        return 0;
+    }
+	if(vainqueur == 1){
+		if((k % 2) == 0){
+			alert("\nJoueur 1 gagnant!");
+			gamesPlayed++;
+			updateGamesPlayedCounter(gamesPlayed);
+			p1Wins++;
+			updatePlayer1WinsCounter(p1Wins);
+			inGame = false;
+			$(".playbox").css("opacity","0.6");
+			return 0;
+		}
+		else{
+			alert("\nJoueur 2 gagnant!");
+			gamesPlayed++;
+			updateGamesPlayedCounter(gamesPlayed);
+			p2Wins++
+			updatePlayer2WinsCounter(p2Wins);
+			inGame = false;
+			$(".playbox").css("opacity","0.6");
+			return 0;
+        }
+	}
+	k++; //Increment turn counter 
+} //end if(ingame)
 })//End click empty square event
 
 /*------------------------End actual game-------------------------*/
 
+//Troubleshooting function for when things get tough
+$(".playbox").click(function(){
+console.log($(this).attr("id"));
+console.log($(this).attr("class"));
+});
+
 //Run game, clear all variables when user clicks start game
 $("#startgame").click(function(){
 	inGame = true;
-	generateHTMLBoard(LIGNES, COLONNES);
-	//resetGameVariables();
-	connect4(LIGNES, COLONNES);			
+	$(".playbox").css("opacity","1.0");
+	resetGameVariables();
+	refreshPlateauDeJeu(gameboard);
+	removeHighlights();
+	
 })
 
 //Function that updates the row number counter to the value of the slider, and the number of lines wanted
@@ -74,10 +117,14 @@ $("#columnnumberslider").change(function(){
 		generateHTMLBoard(LIGNES, COLONNES);
 	}
 })
+
+function removeHighlights(){
+	$(".highlightbox").removeClass("highlightbox").addClass("playbox");
+}
 //Clear all game variables
 function resetGameVariables(){
-	 NBCOLONNES = COLUMNS;
-	 NBRANGEES = LINES;
+	 NBCOLONNES = COLONNES;
+	 NBRANGEES = LIGNES;
 	 gameboard = (creeTableauVide(NBCOLONNES,NBRANGEES," "));
 	 joueur1 = player1Radio();
 	 joueur2 = player2Radio();
@@ -171,7 +218,9 @@ function refreshPlateauDeJeu(mat){ //Refreshes the game board in the html page
 	
 	for(var j = 0; j < mat.length; j++){			//Column j
 		for(var i = 0; i < mat[0].length; i++){		//Row i
-		
+			if(mat[j][i] == " "){
+				$("#"+i+j).css("background-image","url(images/blankquare.png)");
+			}
 			if(mat[j][i] == "X"){	//X is black 
 				$("#"+i+j).css("background-image","url(images/blacksquare.png)");
 			}
@@ -511,6 +560,8 @@ while (vainqueur < 1){                              // Boucle jusqu'a ce qu'un j
     }
  
 	else {
+	
+	
         playermove = prompt("\n\nJoueur 2 (O) colonne?");
         if (playermove == null){
 			return (0);

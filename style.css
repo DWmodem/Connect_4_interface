@@ -10,7 +10,8 @@
 	padding: 16px 32px;		/*top and bottom, right and left*/
 	list-style-type: none;
 	display: inline;
-	background-image: url(images/blankquare.png); 
+	background-image: url(images/blankquare.png);
+	opacity: 0.4;
 }
 .highlightbox{
 	outline: 4px solid #79FC38;
