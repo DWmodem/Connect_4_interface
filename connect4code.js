@@ -254,16 +254,16 @@ function player2Radio(){
 
 
 function updateGamesPlayedCounter(games){
-	$("#gamesplayed").text(""+games);
+	$("#gamesplayed").text(games);
 }
 function updatePlayer1WinsCounter(Wins){
-	$("#player1wins").text(""+Wins);
+	$("#player1wins").text(Wins);
 }
 function updatePlayer2WinsCounter(Wins){
-	$("#player2wins").text(""+Wins);
+	$("#player2wins").text(Wins);
 }
 function updateTieCounter(pat){
-	$("#tie").text(""+tie);
+	$("#tie").text(tie);
 }
 function creeTableauVide (nlignes, ncolonnes, valeur){ // Crée une matrice de la taille spécifiée (y lignes, x colonnes) 
    	var mat = [];                              // avec la valeur (valeur) a tout les points.
