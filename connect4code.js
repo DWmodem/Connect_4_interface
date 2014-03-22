@@ -47,7 +47,7 @@ if(inGame && (colonneAcoord(gameboard, parseInt(currentColumn) + 1) != 0)){ // T
 	playerturn = (k % 2);
 	modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
 	refreshPlateauDeJeu(gameboard);						// Refresh the html board
-	vainqueur = verifieVainqueur(gameboard, 0); 
+	vainqueur = verifieVainqueur(gameboard, false); 
 	if(initiateWinConsequences(vainqueur) == 0){		//If there is a winner, end the game
 		return 0;
 	}	
@@ -61,7 +61,7 @@ if(inGame && (colonneAcoord(gameboard, parseInt(currentColumn) + 1) != 0)){ // T
 		playerturn = (k % 2);
 		modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
 		refreshPlateauDeJeu(gameboard);						// Refresh the html board
-		vainqueur = verifieVainqueur(gameboard, 0); 
+		vainqueur = verifieVainqueur(gameboard, false); 
 		if(initiateWinConsequences(vainqueur) == 0){		//If there is a winner, end the game
 			return 0;
 		}
@@ -377,7 +377,7 @@ function modifieBoard(board, player, coord){   // Board est le plateau de jeu, p
     return(board);
 };
 												//If comp == 1, it is the computer who is thinking ahead.
-function verifieVainqueur(board, comp){       	// Fonction qui verifie si il y a un gagnant.
+function verifieVainqueur(board, isComp){       	// Fonction qui verifie si il y a un gagnant.
 												// Retourne 1 si il y a un gagnant, 0 si il n'y en a pas -1 si c'est nul
 var counter = 0;
 var tieCounter = 0;
@@ -390,7 +390,7 @@ var tieCounter = 0;
                (board[i][j+1] == board[i][j+2]) && 
                (board[i][j+2] == board[i][j+3]) && 
                (board[i][j] != " ")){
-				if(comp != 1){
+				if(!isComp){
 					$("#"+j+i).addClass("highlightbox");
 					$("#"+(j+1)+i).addClass("highlightbox");
 					$("#"+(j+2)+i).addClass("highlightbox");
@@ -408,7 +408,7 @@ var tieCounter = 0;
                (board[i+1][j] == board[i+2][j]) && 
                (board[i+2][j] == board[i+3][j]) && 
                (board[i][j] != " ")){
-			   	if(comp != 1){
+			   	if(!isComp){
 					$("#"+j+i).addClass("highlightbox");
 					$("#"+j+(i+1)).addClass("highlightbox");
 					$("#"+j+(i+2)).addClass("highlightbox");
@@ -426,7 +426,7 @@ var tieCounter = 0;
                (board[i+1][j+1] == board[i+2][j+2]) && 
                (board[i+2][j+2] == board[i+3][j+3]) && 
                (board[i][j] != " ")){
-				if(comp != 1){
+				if(!isComp){
 					$("#"+j+i).addClass("highlightbox");
 					$("#"+(j+1)+(i+1)).addClass("highlightbox");
 					$("#"+(j+2)+(i+2)).addClass("highlightbox");
@@ -444,7 +444,7 @@ var tieCounter = 0;
                (board[i+1][j-1] == board[i+2][j-2]) &&
                (board[i+2][j-2] == board[i+3][j-3]) &&
                (board[i][j] != " ")){
-   				if(comp != 1){
+   				if(!isComp){
 					$("#"+j+i).addClass("highlightbox");
 					$("#"+(j-1)+(i+1)).addClass("highlightbox");
 					$("#"+(j-2)+(i+2)).addClass("highlightbox");
@@ -491,6 +491,7 @@ var validMoves = Array(board.length);
 var testBoard = [];
 var playerturn = (k % 2);
 
+
     for(var i = 0; i < board.length; i++)
         {
         validMoves[i] = i + 1;			// ex: validMoves = [1,2,3,4,5,6,7];
@@ -510,7 +511,7 @@ var playerturn = (k % 2);
         testBoard = independentArray2D(board);      // Pour player 1
         modifieBoard(testBoard, playerturn, colonneAcoord(testBoard, validMoves[x]));
                                                     // Verifier si ce move provoque un vainqueur
-        if(verifieVainqueur(testBoard, 1) == 1){       // Si oui, retourner ce move
+        if(verifieVainqueur(testBoard, true) == 1){       // Si oui, retourner ce move
             return (validMoves[x]);
             };
         };
@@ -525,7 +526,7 @@ var playerturn = (k % 2);
         testBoard = independentArray2D(board);          // Pour player 2
         modifieBoard(testBoard,(playerturn), colonneAcoord(testBoard, validMoves[x]));
                                                     // Verifier si ce move provoque un vainqueur
-        if(verifieVainqueur(testBoard, 1) == 1){       // Si oui, retourner ce move
+        if(verifieVainqueur(testBoard, true) == 1){       // Si oui, retourner ce move
             return (validMoves[x]);
             };
         };
@@ -655,7 +656,7 @@ while (vainqueur < 1){                              // Boucle jusqu'a ce qu'un j
 	playerturn = (k % 2);
 	modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
 	refreshPlateauDeJeu(gameboard);				// Refresh the html board
-	vainqueur = verifieVainqueur(gameboard, 0); 		// Retournera -1 si le jeu est plein, donc partie nulle. 
+	vainqueur = verifieVainqueur(gameboard, false); 		// Retournera -1 si le jeu est plein, donc partie nulle. 
 										// Retourne 1 si vainqueur.
 	if(initiateWinConsequences(vainqueur) == 0){
 		return 0;
