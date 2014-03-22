@@ -48,7 +48,7 @@ if(inGame && (colonneAcoord(gameboard, parseInt(currentColumn) + 1) != 0)){ // T
 	modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
 	refreshPlateauDeJeu(gameboard);						// Refresh the html board
 	vainqueur = verifieVainqueur(gameboard, false); 
-	if(initiateWinConsequences(vainqueur) == 0){		//If there is a winner, end the game
+	if(initiateWinConsequences(vainqueur, k) == 0){		//If there is a winner, end the game
 		return 0;
 	}	
 	k++; //Increment turn counter 
@@ -62,7 +62,7 @@ if(inGame && (colonneAcoord(gameboard, parseInt(currentColumn) + 1) != 0)){ // T
 		modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
 		refreshPlateauDeJeu(gameboard);						// Refresh the html board
 		vainqueur = verifieVainqueur(gameboard, false); 
-		if(initiateWinConsequences(vainqueur) == 0){		//If there is a winner, end the game
+		if(initiateWinConsequences(vainqueur, k) == 0){		//If there is a winner, end the game
 			return 0;
 		}
 		k++;
@@ -158,7 +158,7 @@ function removeHighlights(){
 //Clear all game variables
 
 //This function takes care of all the things to do when there is a winner
-function initiateWinConsequences(vainqueur){
+function initiateWinConsequences(vainqueur, k){
 
 	if (vainqueur == -1){                          
         alert("Partie nulle!");
@@ -658,7 +658,7 @@ while (vainqueur < 1){                              // Boucle jusqu'a ce qu'un j
 	refreshPlateauDeJeu(gameboard);				// Refresh the html board
 	vainqueur = verifieVainqueur(gameboard, false); 		// Retournera -1 si le jeu est plein, donc partie nulle. 
 										// Retourne 1 si vainqueur.
-	if(initiateWinConsequences(vainqueur) == 0){
+	if(initiateWinConsequences(vainqueur, k) == 0){
 		return 0;
 	}
 	k++;
