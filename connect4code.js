@@ -1,5 +1,8 @@
 //Jeu de connect 4
 //Humain et ordi
+//Start game button: line 98
+//PvP connect 4 : line 22
+//CvC connect 4: bottom of page
 $(document).ready(function(){
 
 //Tracking data.
@@ -10,12 +13,13 @@ var p1Wins = 0;
 var p2Wins = 0;
 var tie = 0;
 var inGame = false;
+var bg_url;					//bg_url is used to remember which image was there before the user hovered over it
 //End Tracking data
 //Generate a board for Aesthetics' sake
 
 generateHTMLBoard(LIGNES, COLONNES);
 
-/*------------------------Actual game----------------------------*/
+/*---------------------------------------------------------------------------------------------Actual game---------------------------------------------------------------------------------------------------------------------*/
 //Game variables
 
 var NBCOLONNES = COLONNES;
@@ -38,56 +42,40 @@ console.log("playbox "+currentRow+currentColumn+" has been clicked");
 
 if(inGame && (colonneAcoord(gameboard, parseInt(currentColumn) + 1) != 0)){ // The +1 to currentColumn is to return to the base of human intuition.
 
-console.log("This is a valid play");
 	playermove = parseInt(currentColumn) + 1;
 	coords = colonneAcoord(gameboard, playermove); 	// la valeur de coords sera forcement valide
 	playerturn = (k % 2);
 	modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
 	refreshPlateauDeJeu(gameboard);						// Refresh the html board
 	vainqueur = verifieVainqueur(gameboard, 0); 
+	if(initiateWinConsequences(vainqueur) == 0){		//If there is a winner, end the game
+		return 0;
+	}	
+	k++; //Increment turn counter 
 	
-	if (vainqueur == -1){                          
-        alert("Partie nulle!");
-		gamesPlayed++;
-		updateGamesPlayedCounter(gamesPlayed);
-		tie++;
-		updateTieCounter(tie);
-		inGame = false;
-		$(".playbox").css("opacity","0.6");
-        return 0;
-    }
-	if(vainqueur == 1){
-		if((k % 2) == 0){
-			alert("\nJoueur 1 gagnant!");
-			gamesPlayed++;
-			updateGamesPlayedCounter(gamesPlayed);
-			p1Wins++;
-			updatePlayer1WinsCounter(p1Wins);
-			inGame = false;
-			$(".playbox").css("opacity","0.6");
+	//IF playing against a computer, have the computer make his move.
+	if(joueur1 == "o" || joueur2 == "o"){
+	
+		playermove = moveAI(gameboard, k);
+		coords = colonneAcoord(gameboard, playermove); 	// la valeur de coords sera forcement valide
+		playerturn = (k % 2);
+		modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
+		refreshPlateauDeJeu(gameboard);						// Refresh the html board
+		vainqueur = verifieVainqueur(gameboard, 0); 
+		if(initiateWinConsequences(vainqueur) == 0){		//If there is a winner, end the game
 			return 0;
 		}
-		else{
-			alert("\nJoueur 2 gagnant!");
-			gamesPlayed++;
-			updateGamesPlayedCounter(gamesPlayed);
-			p2Wins++
-			updatePlayer2WinsCounter(p2Wins);
-			inGame = false;
-			$(".playbox").css("opacity","0.6");
-			return 0;
-        }
+		k++;
 	}
-	k++; //Increment turn counter 
 } //end if(ingame)
 })//End click empty square event
 
-/*------------------------End actual game-------------------------*/
+/*----------------------------------------------------------------------------------------------------End actual game-----------------------------------------------------------------------------------------------------------*/
 
 //Troubleshooting function for when things get tough
 $(".playbox").click(function(){
-console.log($(this).attr("id"));
-console.log($(this).attr("class"));
+	console.log($(this).attr("id"));
+	console.log($(this).attr("class"));
 });
 
 //Run game, clear all variables when user clicks start game
@@ -98,21 +86,54 @@ $("#startgame").click(function(){
 	refreshPlateauDeJeu(gameboard);
 	removeHighlights();
 	
+	if(joueur1 == "o" && joueur2 == "o"){	//Have computers go at it
+		connect4(LIGNES, COLONNES);
+		return 0;
+	}
+	if(joueur1 == "o" && joueur2 == "h"){	//Have a computer play the first move
+		playermove = moveAI(gameboard, k);
+		coords = colonneAcoord(gameboard, playermove); 	
+		playerturn = 0;										// It is player 1's turn
+		modifieBoard(gameboard, playerturn, coords);		// Modifie le board en memoire
+		refreshPlateauDeJeu(gameboard);						// Refresh the html board
+		k++;
+	}
+	//The case player 1 = player and player 2 = computer is taken care of by the actual game function
 })
+
+//Show where the token would be placed when one hovers the mouse over
 $(".playbox").mouseenter(function(){
 
+	
 	var currentColumn = ($(this).attr('id')).charAt(1);
-	var futurePlacementCoords = [0,0]
+	var futurePlacementCoords = colonneAcoord(gameboard, parseInt(currentColumn) + 1);
+	bg_url = $("#"+futurePlacementCoords[1]+futurePlacementCoords[0]).css("background-image");
+	
 	if(inGame && (colonneAcoord(gameboard, parseInt(currentColumn) + 1) != 0)){
-		
+		console.log(bg_url);
 		colonneAcoord(gameboard, parseInt(currentColumn) + 1);
-		if((k%2) == 0){
-			$("#"+futurePlacementCoords[0]+futurePlacementCoords[1]).css("background-image","images/blacksquare.png")
+		if((k%2) == 0){	//Player 1, X, Black.
+			$("#"+futurePlacementCoords[1]+futurePlacementCoords[0]).css("background-image","url(images/blackplacementsquare.png)");
+			console.log("Player 1 hovered over playbox " + futurePlacementCoords[0] +""+ futurePlacementCoords[1]);
+		}
+		else if((k%2) == 1){	//Player 2, O, Red.
+			$("#"+futurePlacementCoords[1]+futurePlacementCoords[0]).css("background-image","url(images/redplacementsquare.png)");
+			console.log("Player 2 hovered over playbox " + futurePlacementCoords[0] +""+ futurePlacementCoords[1]);
 		}
 		
 	}
-
 });
+
+//Remove the hovered over item's new img
+$(".playbox").mouseleave(function(){
+
+	var currentColumn = ($(this).attr('id')).charAt(1);
+	var futurePlacementCoords = colonneAcoord(gameboard, parseInt(currentColumn) + 1);
+	$("#"+futurePlacementCoords[1]+futurePlacementCoords[0]).css("background-image", bg_url);
+});
+
+
+
 //Function that updates the row number counter to the value of the slider, and the number of lines wanted
 $("#rownumberslider").change(function(){
 	$("#rownumbercounter").text($("#rownumberslider").val());
@@ -135,6 +156,44 @@ function removeHighlights(){
 	$(".highlightbox").removeClass("highlightbox").addClass("playbox");
 }
 //Clear all game variables
+
+//This function takes care of all the things to do when there is a winner
+function initiateWinConsequences(vainqueur){
+
+	if (vainqueur == -1){                          
+        alert("Partie nulle!");
+		gamesPlayed++;
+		updateGamesPlayedCounter(gamesPlayed);
+		tie++;
+		updateTieCounter(tie);
+		inGame = false;
+		$(".playbox").css("opacity","0.7");
+        return 0;
+    }
+	if(vainqueur == 1){
+		if((k % 2) == 0){
+			alert("\nJoueur 1 gagnant!");
+			gamesPlayed++;
+			updateGamesPlayedCounter(gamesPlayed);
+			p1Wins++;
+			updatePlayer1WinsCounter(p1Wins);
+			inGame = false;
+			$(".playbox").css("opacity","0.7");
+			return 0;
+		}
+		else{
+			alert("\nJoueur 2 gagnant!");
+			gamesPlayed++;
+			updateGamesPlayedCounter(gamesPlayed);
+			p2Wins++
+			updatePlayer2WinsCounter(p2Wins);
+			inGame = false;
+			$(".playbox").css("opacity","0.7");
+			return 0;
+        }
+	}
+	return 1;
+}
 function resetGameVariables(){
 	 NBCOLONNES = COLONNES;
 	 NBRANGEES = LIGNES;
@@ -332,10 +391,10 @@ var tieCounter = 0;
                (board[i][j+2] == board[i][j+3]) && 
                (board[i][j] != " ")){
 				if(comp != 1){
-					$("#"+j+i).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j+1)+i).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j+2)+i).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j+3)+i).removeClass("playbox").addClass("highlightbox");
+					$("#"+j+i).addClass("highlightbox");
+					$("#"+(j+1)+i).addClass("highlightbox");
+					$("#"+(j+2)+i).addClass("highlightbox");
+					$("#"+(j+3)+i).addClass("highlightbox");
 				}
 				return(1);
                 }
@@ -350,10 +409,10 @@ var tieCounter = 0;
                (board[i+2][j] == board[i+3][j]) && 
                (board[i][j] != " ")){
 			   	if(comp != 1){
-					$("#"+j+i).removeClass("playbox").addClass("highlightbox");
-					$("#"+j+(i+1)).removeClass("playbox").addClass("highlightbox");
-					$("#"+j+(i+2)).removeClass("playbox").addClass("highlightbox");
-					$("#"+j+(i+3)).removeClass("playbox").addClass("highlightbox");
+					$("#"+j+i).addClass("highlightbox");
+					$("#"+j+(i+1)).addClass("highlightbox");
+					$("#"+j+(i+2)).addClass("highlightbox");
+					$("#"+j+(i+3)).addClass("highlightbox");
 				}
               return(1);
                 }
@@ -368,10 +427,10 @@ var tieCounter = 0;
                (board[i+2][j+2] == board[i+3][j+3]) && 
                (board[i][j] != " ")){
 				if(comp != 1){
-					$("#"+j+i).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j+1)+(i+1)).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j+2)+(i+2)).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j+3)+(i+3)).removeClass("playbox").addClass("highlightbox");
+					$("#"+j+i).addClass("highlightbox");
+					$("#"+(j+1)+(i+1)).addClass("highlightbox");
+					$("#"+(j+2)+(i+2)).addClass("highlightbox");
+					$("#"+(j+3)+(i+3)).addClass("highlightbox");
 				}
               return(1);
                 }
@@ -386,10 +445,10 @@ var tieCounter = 0;
                (board[i+2][j-2] == board[i+3][j-3]) &&
                (board[i][j] != " ")){
    				if(comp != 1){
-					$("#"+j+i).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j-1)+(i+1)).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j-2)+(i+2)).removeClass("playbox").addClass("highlightbox");
-					$("#"+(j-3)+(i+3)).removeClass("playbox").addClass("highlightbox");
+					$("#"+j+i).addClass("highlightbox");
+					$("#"+(j-1)+(i+1)).addClass("highlightbox");
+					$("#"+(j-2)+(i+2)).addClass("highlightbox");
+					$("#"+(j-3)+(i+3)).addClass("highlightbox");
 				}
               return(1);
                 }
@@ -598,34 +657,8 @@ while (vainqueur < 1){                              // Boucle jusqu'a ce qu'un j
 	refreshPlateauDeJeu(gameboard);				// Refresh the html board
 	vainqueur = verifieVainqueur(gameboard, 0); 		// Retournera -1 si le jeu est plein, donc partie nulle. 
 										// Retourne 1 si vainqueur.
-	if (vainqueur == -1){                           
-        alert("Partie nulle!");
-		gamesPlayed++;
-		updateGamesPlayedCounter(gamesPlayed);
-		tie++;
-		updateTieCounter(tie);
-		inGame = false;
-        return 0;
-    }
-	if(vainqueur == 1){
-		if((k % 2) == 0){
-			alert("\nJoueur 1 gagnant!");
-			gamesPlayed++;
-			updateGamesPlayedCounter(gamesPlayed);
-			p1Wins++;
-			updatePlayer1WinsCounter(p1Wins);
-			inGame = false;
-			return 0;
-		}
-		else{
-			alert("\nJoueur 2 gagnant!");
-			gamesPlayed++;
-			updateGamesPlayedCounter(gamesPlayed);
-			p2Wins++
-			updatePlayer2WinsCounter(p2Wins);
-			inGame = false;
-			return 0;
-        }
+	if(initiateWinConsequences(vainqueur) == 0){
+		return 0;
 	}
 	k++;
 }	//End of while
